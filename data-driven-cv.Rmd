@@ -1,6 +1,7 @@
 ---
 name: Adam
 surname: Phillips
+profilepic: "./profile.jpeg"
 position: "Network Engineer | Telecoms & Automation"
 phone: "07983 206039"
 email: "adam.phillips@ross-lab.org"
