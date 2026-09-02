@@ -48,6 +48,9 @@ jobs:
                                                "mdframed","needspace","changepage",
                                                "multirow","tabu","threeparttable",
                                                "makecell","sectsty","titlesec"))'
+      - name: Render CV
+        run: |
+          Rscript -e 'rmarkdown::render("data-driven-cv.Rmd", output_file = "adam-phillips-cv.pdf")'
       - name: Upload LaTeX log on failure
         if: failure()
         uses: actions/upload-artifact@v4
@@ -56,9 +59,6 @@ jobs:
           path: |
             adam-phillips-cv.log
             adam-phillips-cv.tex
-      - name: Render CV
-        run: |
-          Rscript -e 'rmarkdown::render("data-driven-cv.Rmd", output_file = "adam-phillips-cv.pdf")'
 
       - name: Upload PDF as artifact
         uses: actions/upload-artifact@v4
