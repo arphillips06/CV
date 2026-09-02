@@ -1,0 +1,60 @@
+---
+name: Adam
+surname: Phillips
+position: "Network Engineer | Telecoms & Automation"
+phone: "07983 206039"
+email: "adam.phillips@ross-lab.org"
+github: arphillips06
+linkedin: adam-ross-phillips-4191448a
+www: "ross-lab.org"
+date: "`r format(Sys.time(), '%B %Y')`"
+headcolor: 1f4e79
+aboutme: "Network Engineer with strong service provider experience across access, core and switching environments. Skilled in routing, traffic engineering, automation and network design, with hands-on delivery in greenfield and production networks. Proven in authoring technical designs, collaborating with vendors, and driving platform improvements through automation. Strong background in Juniper, MPLS, BGP, EVPN and XGS-PON access networks, with growing DevOps and CI/CD capability."
+docname: CV
+output: vitae::awesomecv
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+  echo    = FALSE,
+  warning = FALSE,
+  message = FALSE
+)
+
+require(xfun)
+xfun::pkg_attach2(
+  c("vitae", "tibble", "magrittr", "here", "glue"),
+  message = FALSE
+)
+
+source(file = here("data", "data.R"))
+```
+
+# Professional Experience
+
+```{r EMPLOYMENT}
+work %>%
+  detailed_entries(
+    with = title,
+    what = unit,
+    when = when,
+    why  = detail
+  )
+```
+
+# Key Technical Skills
+
+```{r SKILLS}
+skills %>%
+  detailed_entries(
+    with = area,
+    why  = detail
+  )
+```
+
+# Interests
+
+```{r INTERESTS}
+interests %>%
+  brief_entries(what = detail)
+```

@@ -1,0 +1,65 @@
+name: Build CV
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'data-driven-cv.Rmd'
+      - 'data/**'
+      - '.github/workflows/build-cv.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  render:
+    name: Render CV to PDF
+    runs-on: ubuntu-latest
+    container:
+      image: rocker/verse:4.4.1
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Mark workspace as safe for git
+        run: git config --global --add safe.directory "$GITHUB_WORKSPACE"
+
+      - name: Cache R packages
+        uses: actions/cache@v4
+        with:
+          path: /usr/local/lib/R/site-library
+          key: r-pkgs-${{ runner.os }}-vitae-v1
+
+      - name: Install R packages
+        run: |
+          Rscript -e 'pkgs <- c("vitae","tibble","magrittr","here","glue","xfun");
+                      missing <- pkgs[!pkgs %in% rownames(installed.packages())];
+                      if (length(missing)) install.packages(missing, repos = "https://cloud.r-project.org")'
+
+      - name: Install LaTeX packages
+        run: |
+          Rscript -e 'tinytex::tlmgr_install(c("fontawesome5","sourcesanspro","roboto","xcolor",
+                                               "fancyhdr","enumitem","etoolbox","unicode-math",
+                                               "ragged2e","setspace","tcolorbox","environ",
+                                               "trimspaces","pdfcol"))'
+
+      - name: Render CV
+        run: |
+          Rscript -e 'rmarkdown::render("data-driven-cv.Rmd", output_file = "adam-phillips-cv.pdf")'
+
+      - name: Upload PDF as artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: adam-phillips-cv
+          path: adam-phillips-cv.pdf
+          if-no-files-found: error
+
+      - name: Commit rendered PDF
+        run: |
+          git config --local user.email "actions@github.com"
+          git config --local user.name "CI"
+          git add adam-phillips-cv.pdf
+          git diff --staged --quiet || git commit -m "ci: rebuild CV PDF [skip ci]"
+          git push
