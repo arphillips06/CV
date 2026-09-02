@@ -69,13 +69,13 @@ work <- tribble(
 
 skills <- tribble(
   ~area, ~detail,
-  "Routing & Core",       "BGP, MPLS, traffic engineering, EVPN, VLANs, VRFs",
-  "Access & Edge",        "XGS-PON, OLT/ONU provisioning, broadband service delivery",
-  "Firewalls & Security", "Juniper SRX, FortiGate, firewall policy design",
-  "Automation & DevOps",  "Go, Python, NETCONF, Jinja2, Git-based configuration management",
-  "Platforms",            "Juniper MX/EX/SRX, Arista EOS, Extreme EXOS, Cisco IOS/IOS-XE, white-box switching",
-  "Infrastructure",       "Linux, VMware, Proxmox, EVE-NG, Kubernetes (developing), CI/CD",
-  "Protocols",            "TCP/IP, DNS, HTTP/S, SSL/TLS",
+  "Routing & Core",       "BGP, MPLS, LDP/RSVP-TE, traffic engineering, OSPF, IS-IS, EVPN/VXLAN, VRFs",
+  "Multicast",            "PIM-SM, anycast RP, MSDP, IGMP snooping, large-scale endpoint troubleshooting",
+  "Access & Edge",        "XGS-PON, OLT/ONU provisioning, broadband service delivery, VLANs, 802.1Q",
+  "Firewalls & Security", "Juniper SRX, FortiGate, Check Point, firewall policy design, DDoS mitigation",
+  "Automation & DevOps",  "Go, Python, NETCONF, RESTCONF, gRPC/gNMI, Jinja2, Ansible, Git-based config management, CI/CD",
+  "Platforms",            "Juniper MX/EX/QFX/SRX, Arista EOS, Extreme EXOS, white-boxes, XGS-PON OLT/ONU",
+  "Infrastructure",       "Linux, VMware, Proxmox, EVE-NG, Kubernetes (developing), Observium, NetBox",
 )
 
 interests <- tribble(
