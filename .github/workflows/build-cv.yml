@@ -1,76 +1,40 @@
-name: Build CV
-
+name: CI for CV
 on:
   push:
-    branches: [main]
     paths:
-      - 'data-driven-cv.Rmd'
-      - 'data/**'
-      - '.github/workflows/build-cv.yml'
-  workflow_dispatch:
-
-permissions:
-  contents: write
+    - .github/workflows/ci.yml
+    - 'markdowns/**'
+    - 'data/**'
+    branches:
+      - main        
+permissions: write-all
 
 jobs:
-  render:
-    name: Render CV to PDF
+  build:
+    name: Creation of resume in en and pt-br
     runs-on: ubuntu-latest
     container:
-      image: rocker/verse:4.4.1
-
+      image: mlampros/mycvitae:rstudiodev
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+      - name: Set up Git repository
+        uses: actions/checkout@v3
 
-      - name: Mark workspace as safe for git
-        run: git config --global --add safe.directory "$GITHUB_WORKSPACE"
-
-      - name: Cache R packages
-        uses: actions/cache@v4
-        with:
-          path: /usr/local/lib/R/site-library
-          key: r-pkgs-${{ runner.os }}-vitae-v1
-
-      - name: Install R packages
+      - name: Installing texlive
         run: |
-          Rscript -e 'pkgs <- c("vitae","tibble","magrittr","here","glue","xfun");
-                      missing <- pkgs[!pkgs %in% rownames(installed.packages())];
-                      if (length(missing)) install.packages(missing, repos = "https://cloud.r-project.org")'
+          sudo apt-get -y update
+          sudo apt-get install -y texlive-base texlive-latex-base
+          sudo apt-get install -y texlive-latex-recommended
+          sudo apt-get install -y texlive-xetex
+          sudo apt-get install -y texlive-fonts-extra
 
-      - name: Install LaTeX packages
+      - name: Render the resumes
         run: |
-          Rscript -e 'tinytex::tlmgr_install(c("fontawesome5","sourcesanspro","roboto",
-                                               "xcolor","fancyhdr","enumitem","etoolbox",
-                                               "unicode-math","ragged2e","setspace",
-                                               "tcolorbox","environ","trimspaces","pdfcol",
-                                               "xifthen","ifmtarg","fontaxes","ly1",
-                                               "mdframed","needspace","changepage",
-                                               "multirow","tabu","threeparttable",
-                                               "makecell","sectsty","titlesec"))'
-      - name: Render CV
-        run: |
-          Rscript -e 'rmarkdown::render("data-driven-cv.Rmd", output_file = "adam-phillips-cv.pdf")'
-      - name: Upload LaTeX log on failure
-        if: failure()
-        uses: actions/upload-artifact@v4
-        with:
-          name: latex-log
-          path: |
-            adam-phillips-cv.log
-            adam-phillips-cv.tex
-
-      - name: Upload PDF as artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: adam-phillips-cv
-          path: adam-phillips-cv.pdf
-          if-no-files-found: error
-
-      - name: Commit rendered PDF
+          Rscript -e "rmarkdown::render(input = file.path(getwd(), 'data-driven-resume.Rmd'), params = list(work_dir = getwd()))"
+          Rscript -e "rmarkdown::render(input = file.path(getwd(), 'data-driven-resume-pt-br.Rmd'), params = list(work_dir = getwd()))"
+      - name: Commit files
         run: |
           git config --local user.email "actions@github.com"
-          git config --local user.name "CI"
-          git add adam-phillips-cv.pdf
-          git diff --staged --quiet || git commit -m "ci: rebuild CV PDF [skip ci]"
+          git config --local user.name "GitHub Actions"
+          git add .
+          git commit -am "add the cv in english and pt-br files to the directory of the repository"
           git push
