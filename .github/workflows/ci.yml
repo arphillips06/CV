@@ -1,17 +1,20 @@
 name: CI for CV
 on:
   push:
-    paths:
-    - .github/workflows/ci.yml
-    - 'markdowns/**'
-    - 'data/**'
     branches:
-      - main        
+      - main
+    paths:
+      - 'data-driven-cv.Rmd'
+      - 'data/**'
+      - 'profile.jpeg'
+      - '.github/workflows/ci.yml'
+  workflow_dispatch:
+
 permissions: write-all
 
 jobs:
   build:
-    name: Creation of resume in en and pt-br
+    name: Render CV
     runs-on: ubuntu-latest
     container:
       image: mlampros/mycvitae:rstudiodev
@@ -30,10 +33,11 @@ jobs:
       - name: Render the resumes
         run: |
           Rscript -e "rmarkdown::render(input = file.path(getwd(), 'data-driven-cv.Rmd'), params = list(work_dir = getwd()))"
+
       - name: Commit files
         run: |
           git config --local user.email "actions@github.com"
           git config --local user.name "GitHub Actions"
-          git add .
-          git commit -am "add the cv in english and pt-br files to the directory of the repository"
+          git add data-driven-cv.pdf
+          git diff --staged --quiet || git commit -m "ci: rebuild CV PDF"
           git push
