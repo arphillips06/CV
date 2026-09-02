@@ -6,7 +6,7 @@ position: "Network Engineer | Telecoms & Automation"
 phone: "07983 206039"
 email: "adam.phillips@ross-lab.org"
 github: arphillips06
-linkedin: adam-ross-phillips-4191448a
+linkedin: https://www.linkedin.com/in/adam-ross-phillips-4191448a/
 www: "ross-lab.org"
 date: "`r format(Sys.time(), '%B %Y')`"
 headcolor: 1f4e79
